@@ -1,6 +1,5 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using MessagePipe;
 using ScreenSystem.Attributes;
 using ScreenSystem.Modal;
 using UniRx;
@@ -10,8 +9,9 @@ using VContainer;
 public class TestModalLifecycle : LifecycleModalBase
 {
     private readonly TestModalView _view;
-    private readonly TestModalUseCaseMock _useCase;
     private readonly ModalManager _modalManager;
+    private readonly NetworkParameter _parameter;
+    private readonly TestModalUseCase _testModalUseCase;
 
     public class NetworkParameter
     {
@@ -24,32 +24,34 @@ public class TestModalLifecycle : LifecycleModalBase
     }
 
     [Inject]
-    public TestModalLifecycle(
-        TestModalView view,
-        TestModalUseCaseMock useCase,
-        ModalManager modalManager
-        ) : base(view)
+    public TestModalLifecycle(TestModalView view, ModalManager modalManager, NetworkParameter parameter, TestModalUseCase testModalUseCase) : base(view)
     {
         _view = view;
-        _useCase = useCase;
         _modalManager = modalManager;
+        _parameter = parameter;
+        _testModalUseCase = testModalUseCase;
     }
 
-    protected override async UniTask WillPushEnterAsync(CancellationToken cancellationToken)
+    protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
     {
-        var parameter = await _useCase.DoConnect(cancellationToken);
-        var testModel = new TestModalModel(parameter);
+        var testModel = new TestModalModel(_parameter);
         _view.SetView(testModel);
-        await UniTask.Yield();
+        return UniTask.CompletedTask;
     }
 
     public override void DidPushEnter()
     {
         base.DidPushEnter();
 
-        _view.OnClose.Subscribe(_ =>
+        _view.OnNext.Subscribe(_ => UniTask.Void(async () =>
+        {
+            var parameter = await _testModalUseCase.DoConnect(cancellationToken: ExitCancellationToken);
+            _modalManager.Push(new TestModalBuilder(parameter), cancellationToken: ExitCancellationToken).Forget();
+        }));
+
+        _view.OnClose.Subscribe(_ => UniTask.Void(async () =>
         {
             _modalManager.Pop(true, cancellationToken: default).Forget();
-        });
+        }));
     }
 }

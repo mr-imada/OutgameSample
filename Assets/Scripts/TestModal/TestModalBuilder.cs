@@ -1,5 +1,5 @@
 using ScreenSystem.Modal;
-public class TestModalBuilder : ModalBuilderBase<TestModalLifecycle, TestModalView>
+public class TestModalBuilder : ModalBuilderBase<TestModalLifecycle, TestModalView, TestModalLifecycle.NetworkParameter>
 {
-    public TestModalBuilder(bool playAnimation = true) : base(playAnimation) { }
+    public TestModalBuilder(TestModalLifecycle.NetworkParameter parameter, bool playAnimation = true) : base(parameter, playAnimation) { }
 }
