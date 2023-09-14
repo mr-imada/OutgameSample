@@ -43,9 +43,15 @@ public class TestModalLifecycle : LifecycleModalBase
     {
         base.DidPushEnter();
 
-        _view.OnClose.Subscribe(_ =>
+        _view.OnNext.Subscribe(_ => UniTask.Void(async () =>
+        {
+            var parameter = await _testModalUseCase.DoConnect(cancellationToken: ExitCancellationToken);
+            _modalManager.Push(new TestModalBuilder(parameter), cancellationToken: ExitCancellationToken).Forget();
+        }));
+
+        _view.OnClose.Subscribe(_ => UniTask.Void(async () =>
         {
             _modalManager.Pop(true, cancellationToken: default).Forget();
-        });
+        }));
     }
 }
