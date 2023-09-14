@@ -10,7 +10,7 @@ public class NextPageLifecycle : LifecyclePageBase
 {
     private readonly NextPageView _view;
     private readonly PageEventPublisher _publisher;
-    private readonly NextPageUseCaseMock _useCase;
+    private readonly NetworkParameter _parameter;
 
     public class NetworkParameter
     {
@@ -23,19 +23,18 @@ public class NextPageLifecycle : LifecyclePageBase
     }
 
     [Inject]
-    public NextPageLifecycle(NextPageView view, PageEventPublisher publisher, NextPageUseCaseMock useCase) : base(view)
+    public NextPageLifecycle(NextPageView view, PageEventPublisher publisher, NetworkParameter parameter) : base(view)
     {
         _view = view;
         _publisher = publisher;
-        _useCase = useCase;
+        _parameter = parameter;
     }
 
-    protected override async UniTask WillPushEnterAsync(CancellationToken cancellationToken)
+    protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
     {
-        var parameter = await _useCase.DoConnect(cancellationToken);
-        var NextModel = new NextPageModel(parameter);
+        var NextModel = new NextPageModel(_parameter);
         _view.SetView(NextModel);
-        await UniTask.Yield();
+        return UniTask.CompletedTask;
     }
 
     public override void DidPushEnter()

@@ -2,10 +2,10 @@ using VContainer;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 
-public class TestModalUseCaseMock
+public class TestModalUseCase
 {
     [Inject]
-    public TestModalUseCaseMock() { }
+    public TestModalUseCase() { }
 
     public async UniTask<TestModalLifecycle.NetworkParameter> DoConnect(CancellationToken cancellationToken)
     {

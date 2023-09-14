@@ -12,44 +12,38 @@ public class TestPageLifecycle : LifecyclePageBase
     private readonly TestPageView _view;
     private readonly PageEventPublisher _publisher;
     private readonly ModalManager _modalManager;
-    private readonly TestPageUseCaseMock _useCase;
-
-    public class NetworkParameter
-    {
-        public readonly string Message;
-
-        public NetworkParameter(string message)
-        {
-            Message = message;
-        }
-    }
+    private readonly NextPageUseCase _nextPageUseCase;
+    private readonly TestModalUseCase _testModalUseCase;
 
     [Inject]
-    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, TestPageUseCaseMock useCase) : base(view)
+    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, TestModalUseCase testModalUseCase) : base(view)
     {
         _view = view;
         _publisher = publisher;
         _modalManager = modalManager;
-        _useCase = useCase;
+        _nextPageUseCase = nextPageUseCase;
+        _testModalUseCase = testModalUseCase;
     }
 
-    protected override async UniTask WillPushEnterAsync(CancellationToken cancellationToken)
+    protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
     {
-        var parameter = await _useCase.DoConnect(cancellationToken);
-        var testModel = new TestPageModel(parameter);
+        var testModel = new TestPageModel();
         _view.SetView(testModel);
+        return UniTask.CompletedTask;
     }
 
     public override void DidPushEnter()
     {
         base.DidPushEnter();
-        _view.OnClickPage.Subscribe(_ =>
+        _view.OnClickPage.Subscribe(_ => UniTask.Void(async () =>
         {
-            _publisher.SendPushEvent(new NextPageBuilder());
-        });
-        _view.OnClickModal.Subscribe(_ =>
+            var parameter = await _nextPageUseCase.DoConnect(cancellationToken: PageExitCancellationToken);
+            _publisher.SendPushEvent(new NextPageBuilder(parameter));
+        }));
+        _view.OnClickModal.Subscribe(_ => UniTask.Void(async () =>
         {
-            _modalManager.Push(new TestModalBuilder(), cancellationToken: default).Forget();
-        });
+            var parameter = await _testModalUseCase.DoConnect(cancellationToken: PageExitCancellationToken);
+            _modalManager.Push(new TestModalBuilder(parameter), cancellationToken: PageExitCancellationToken).Forget();
+        }));
     }
 }

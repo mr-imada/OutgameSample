@@ -2,8 +2,8 @@ public class TestPageModel
 {
     public readonly string TestMessage;
 
-    public TestPageModel(TestPageLifecycle.NetworkParameter parameter)
+    public TestPageModel()
     {
-        TestMessage = parameter.Message;
+        TestMessage = "TestPage";
     }
 }

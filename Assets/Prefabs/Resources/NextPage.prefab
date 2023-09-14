@@ -390,7 +390,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentReference:
     TypeName: 
-  autoRun: 1
+  autoRun: 0
   autoInjectGameObjects: []
   _view: {fileID: 4278373653613703857}
 --- !u!114 &4278373653613703857
@@ -414,8 +414,6 @@ MonoBehaviour:
     _popEnterAnimations: []
     _popExitAnimations: []
   _messageText: {fileID: 7740965208254984883}
-  _nextPageButton: {fileID: 7740965207604082177}
-  _nextModalButton: {fileID: 7740965206927931132}
   _returnButton: {fileID: 7376839780072907035}
 --- !u!1 &7740965206927931106
 GameObject:

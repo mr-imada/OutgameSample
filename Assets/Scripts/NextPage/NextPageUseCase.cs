@@ -2,10 +2,10 @@ using VContainer;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 
-public class NextPageUseCaseMock
+public class NextPageUseCase
 {
     [Inject]
-    public NextPageUseCaseMock() { }
+    public NextPageUseCase() { }
 
     public async UniTask<NextPageLifecycle.NetworkParameter> DoConnect(CancellationToken cancellationToken)
     {
