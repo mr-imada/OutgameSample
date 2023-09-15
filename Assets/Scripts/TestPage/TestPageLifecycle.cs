@@ -4,6 +4,7 @@ using ScreenSystem.Modal;
 using ScreenSystem.Attributes;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using MessagePipe;
 using UniRx;
 
 [AssetName("TestPage")]
@@ -13,14 +14,17 @@ public class TestPageLifecycle : LifecyclePageBase
     private readonly PageEventPublisher _publisher;
     private readonly ModalManager _modalManager;
     private readonly NextPageUseCase _nextPageUseCase;
+    private ISubscriber<MessagePipeTestMessage> _testMessageSubscriber;
+    private readonly CancellationTokenSource _disposeCancellationTokenSource = new();
 
     [Inject]
-    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase) : base(view)
+    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, ISubscriber<MessagePipeTestMessage> testMessageSubscriber) : base(view)
     {
         _view = view;
         _publisher = publisher;
         _modalManager = modalManager;
         _nextPageUseCase = nextPageUseCase;
+        _testMessageSubscriber = testMessageSubscriber;
     }
 
     protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
@@ -45,5 +49,16 @@ public class TestPageLifecycle : LifecyclePageBase
             var countParameter = new TestModalLifecycle.CountParameter(1);
             _modalManager.Push(new TestModalBuilder(countParameter), cancellationToken: PageExitCancellationToken).Forget();
         });
+        _testMessageSubscriber.Subscribe(m =>
+        {
+            _view.UpdateModalCount(m.Count);
+        }).AddTo(_disposeCancellationTokenSource.Token);
+    }
+
+    public override void Dispose()
+    {
+        _disposeCancellationTokenSource.Cancel();
+        _disposeCancellationTokenSource.Dispose();
+        base.Dispose();
     }
 }

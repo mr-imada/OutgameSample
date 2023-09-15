@@ -1,3 +1,4 @@
+using MessagePipe;
 using ScreenSystem.Page;
 using ScreenSystem.VContainerExtension;
 using UnityEngine;
@@ -14,6 +15,9 @@ public class RootLifetimeScope : LifetimeScope
         builder.RegisterPageSystem(_container);
         builder.RegisterModalSystem(_modalContainer);
         builder.Register<IHttpClient>(_ => new HttpClient(), Lifetime.Singleton);
+
+        var options = builder.RegisterMessagePipe();
+        builder.RegisterMessageBroker<MessagePipeTestMessage>(options);
         builder.RegisterEntryPoint<TestEntryPoint>();
     }
 

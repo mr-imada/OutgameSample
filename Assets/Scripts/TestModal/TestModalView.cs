@@ -7,10 +7,12 @@ using TMPro;
 
 public class TestModalView : ModalViewBase
 {
+    [SerializeField] private Button _applyButton;
     [SerializeField] private Button _nextButton;
     [SerializeField] private Button _closeButton;
     [SerializeField] private TextMeshProUGUI _messageText;
 
+    public IObservable<Unit> OnApply => _applyButton.OnClickAsObservable();
     public IObservable<Unit> OnNext => _nextButton.OnClickAsObservable();
     public IObservable<Unit> OnClose => _closeButton.OnClickAsObservable();
 
