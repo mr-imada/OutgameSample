@@ -4,6 +4,6 @@ public class TestPageModel
 
     public TestPageModel()
     {
-        TestMessage = "TestPage";
+        TestMessage = "Test Page";
     }
 }

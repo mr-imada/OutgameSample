@@ -3,7 +3,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-public class TestModalLifetimeScope : LifetimeScopeWithParameter<TestModalLifecycle.NetworkParameter>
+public class TestModalLifetimeScope : LifetimeScopeWithParameter<TestModalLifecycle.CountParameter>
 {
     [SerializeField] private TestModalView _view;
 
@@ -12,6 +12,5 @@ public class TestModalLifetimeScope : LifetimeScopeWithParameter<TestModalLifecy
         base.Configure(builder);
         builder.Register<TestModalLifecycle>(Lifetime.Singleton);
         builder.RegisterComponent(_view);
-        builder.Register<TestModalUseCase>(Lifetime.Singleton);
     }
 }

@@ -10,26 +10,27 @@ public class TestModalLifecycle : LifecycleModalBase
 {
     private readonly TestModalView _view;
     private readonly ModalManager _modalManager;
-    private readonly NetworkParameter _parameter;
-    private readonly TestModalUseCase _testModalUseCase;
+    private readonly CountParameter _parameter;
 
-    public class NetworkParameter
+    /// <summary>
+    /// モーダルの重なり回数のパラメータ
+    /// </summary>
+    public class CountParameter
     {
-        public readonly string Message;
+        public readonly int ModalCount;
 
-        public NetworkParameter(string message)
+        public CountParameter(int count)
         {
-            Message = message;
+            ModalCount = count;
         }
     }
 
     [Inject]
-    public TestModalLifecycle(TestModalView view, ModalManager modalManager, NetworkParameter parameter, TestModalUseCase testModalUseCase) : base(view)
+    public TestModalLifecycle(TestModalView view, ModalManager modalManager, CountParameter parameter) : base(view)
     {
         _view = view;
         _modalManager = modalManager;
         _parameter = parameter;
-        _testModalUseCase = testModalUseCase;
     }
 
     protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
@@ -43,15 +44,12 @@ public class TestModalLifecycle : LifecycleModalBase
     {
         base.DidPushEnter();
 
-        _view.OnNext.Subscribe(_ => UniTask.Void(async () =>
+        _view.OnNext.Subscribe(_ =>
         {
-            var parameter = await _testModalUseCase.DoConnect(cancellationToken: ExitCancellationToken);
-            _modalManager.Push(new TestModalBuilder(parameter), cancellationToken: ExitCancellationToken).Forget();
-        }));
-
-        _view.OnClose.Subscribe(_ =>
-        {
-            _modalManager.Pop(true, cancellationToken: ExitCancellationToken).Forget();
+            var nextParameter = new CountParameter(_parameter.ModalCount + 1);
+            _modalManager.Push(new TestModalBuilder(nextParameter), cancellationToken: ExitCancellationToken).Forget();
         });
+
+        _view.OnClose.Subscribe(_ => { _modalManager.Pop(true, cancellationToken: ExitCancellationToken).Forget(); });
     }
 }
