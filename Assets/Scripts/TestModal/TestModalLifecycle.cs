@@ -1,5 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MessagePipe;
 using ScreenSystem.Attributes;
 using ScreenSystem.Modal;
 using UniRx;
@@ -11,6 +12,7 @@ public class TestModalLifecycle : LifecycleModalBase
     private readonly TestModalView _view;
     private readonly ModalManager _modalManager;
     private readonly CountParameter _parameter;
+    private readonly IPublisher<MessagePipeTestMessage> _testMessagePublisher;
 
     /// <summary>
     /// モーダルの重なり回数のパラメータ
@@ -26,16 +28,17 @@ public class TestModalLifecycle : LifecycleModalBase
     }
 
     [Inject]
-    public TestModalLifecycle(TestModalView view, ModalManager modalManager, CountParameter parameter) : base(view)
+    public TestModalLifecycle(TestModalView view, ModalManager modalManager, CountParameter parameter, IPublisher<MessagePipeTestMessage> publisher) : base(view)
     {
         _view = view;
         _modalManager = modalManager;
         _parameter = parameter;
+        _testMessagePublisher = publisher;
     }
 
     protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
     {
-        var testModel = new TestModalModel(_parameter);
+        var testModel = new TestModalModel(_parameter.ModalCount);
         _view.SetView(testModel);
         return UniTask.CompletedTask;
     }
@@ -43,6 +46,11 @@ public class TestModalLifecycle : LifecycleModalBase
     public override void DidPushEnter()
     {
         base.DidPushEnter();
+        
+        _view.OnApply.Subscribe(_ =>
+        {
+            _testMessagePublisher.Publish(new MessagePipeTestMessage(_parameter.ModalCount));
+        });
 
         _view.OnNext.Subscribe(_ =>
         {

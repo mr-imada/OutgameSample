@@ -4,6 +4,7 @@ using ScreenSystem.Modal;
 using ScreenSystem.Attributes;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using MessagePipe;
 using UniRx;
 
 [AssetName("TestPage")]
@@ -13,14 +14,16 @@ public class TestPageLifecycle : LifecyclePageBase
     private readonly PageEventPublisher _publisher;
     private readonly ModalManager _modalManager;
     private readonly NextPageUseCase _nextPageUseCase;
+    private ISubscriber<MessagePipeTestMessage> _testMessageSubscriber;
 
     [Inject]
-    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase) : base(view)
+    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, ISubscriber<MessagePipeTestMessage> testMessageSubscriber) : base(view)
     {
         _view = view;
         _publisher = publisher;
         _modalManager = modalManager;
         _nextPageUseCase = nextPageUseCase;
+        _testMessageSubscriber = testMessageSubscriber;
     }
 
     protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
@@ -44,6 +47,10 @@ public class TestPageLifecycle : LifecyclePageBase
             // 通信を行わずにパラメータだけを渡して次の画面を開く
             var countParameter = new TestModalLifecycle.CountParameter(1);
             _modalManager.Push(new TestModalBuilder(countParameter), cancellationToken: PageExitCancellationToken).Forget();
+        });
+        _testMessageSubscriber.Subscribe(m =>
+        {
+            _view.UpdateModalCount(m.Count);
         });
     }
 }

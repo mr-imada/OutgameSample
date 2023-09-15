@@ -2,8 +2,8 @@ public class TestModalModel
 {
     public readonly string TestMessage;
 
-    public TestModalModel(TestModalLifecycle.CountParameter parameter)
+    public TestModalModel(int modalCount)
     {
-        TestMessage = $"Test Modal {parameter.ModalCount}";
+        TestMessage = $"Test Modal {modalCount}";
     }
 }

@@ -8,6 +8,7 @@ using TMPro;
 public class TestPageView : PageViewBase
 {
     [SerializeField] private TextMeshProUGUI _messageText;
+    [SerializeField] private TextMeshProUGUI _modalCountText;
     [SerializeField] private Button _nextPageButton;
     [SerializeField] private Button _nextModalButton;
 
@@ -17,5 +18,11 @@ public class TestPageView : PageViewBase
     public void SetView(TestPageModel model)
     {
         _messageText.SetText(model.TestMessage);
+        UpdateModalCount(0);
+    }
+
+    public void UpdateModalCount(int count)
+    {
+        _modalCountText.SetText($"Modal Count: {count}");
     }
 }
