@@ -13,16 +13,14 @@ public class TestPageLifecycle : LifecyclePageBase
     private readonly PageEventPublisher _publisher;
     private readonly ModalManager _modalManager;
     private readonly NextPageUseCase _nextPageUseCase;
-    private readonly TestModalUseCase _testModalUseCase;
 
     [Inject]
-    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, TestModalUseCase testModalUseCase) : base(view)
+    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase) : base(view)
     {
         _view = view;
         _publisher = publisher;
         _modalManager = modalManager;
         _nextPageUseCase = nextPageUseCase;
-        _testModalUseCase = testModalUseCase;
     }
 
     protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
@@ -37,13 +35,15 @@ public class TestPageLifecycle : LifecyclePageBase
         base.DidPushEnter();
         _view.OnClickPage.Subscribe(_ => UniTask.Void(async () =>
         {
+            // 通信を行い、通信結果を渡して次の画面を開く
             var parameter = await _nextPageUseCase.DoConnect(cancellationToken: PageExitCancellationToken);
             _publisher.SendPushEvent(new NextPageBuilder(parameter));
         }));
-        _view.OnClickModal.Subscribe(_ => UniTask.Void(async () =>
+        _view.OnClickModal.Subscribe(_ =>
         {
-            var parameter = await _testModalUseCase.DoConnect(cancellationToken: PageExitCancellationToken);
-            _modalManager.Push(new TestModalBuilder(parameter), cancellationToken: PageExitCancellationToken).Forget();
-        }));
+            // 通信を行わずにパラメータだけを渡して次の画面を開く
+            var countParameter = new TestModalLifecycle.CountParameter(1);
+            _modalManager.Push(new TestModalBuilder(countParameter), cancellationToken: PageExitCancellationToken).Forget();
+        });
     }
 }

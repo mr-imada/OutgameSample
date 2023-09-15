@@ -12,6 +12,5 @@ public class TestPageLifetimeScope : LifetimeScope
         builder.RegisterComponent(_view);
         builder.Register<TestModalLifecycle>(Lifetime.Singleton);
         builder.Register<NextPageUseCase>(Lifetime.Singleton);
-        builder.Register<TestModalUseCase>(Lifetime.Singleton);
     }
 }
