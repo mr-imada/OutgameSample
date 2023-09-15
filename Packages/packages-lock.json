@@ -170,6 +170,17 @@
       },
       "url": "https://packages.unity.com"
     },
+    "jp.adarapata.screensystem": {
+      "version": "https://github.com/adarapata/ScreenSystem.git?path=Assets/ScreenSystem",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.1.0",
+        "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.13.2",
+        "com.harumak.unityscreennavigator": "https://github.com/Haruma-K/UnityScreenNavigator.git?path=/Assets/UnityScreenNavigator#1.6.3"
+      },
+      "hash": "da0afaa4d0e2020b260bb0fb0ae09cfb74efef15"
+    },
     "jp.hadashikick.vcontainer": {
       "version": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.13.2",
       "depth": 0,
