@@ -15,6 +15,7 @@ public class TestPageLifecycle : LifecyclePageBase
     private readonly ModalManager _modalManager;
     private readonly NextPageUseCase _nextPageUseCase;
     private ISubscriber<MessagePipeTestMessage> _testMessageSubscriber;
+    private readonly CancellationTokenSource _disposeCancellationTokenSource = new();
 
     [Inject]
     public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, ISubscriber<MessagePipeTestMessage> testMessageSubscriber) : base(view)
@@ -51,6 +52,13 @@ public class TestPageLifecycle : LifecyclePageBase
         _testMessageSubscriber.Subscribe(m =>
         {
             _view.UpdateModalCount(m.Count);
-        });
+        }).AddTo(_disposeCancellationTokenSource.Token);
+    }
+
+    public override void Dispose()
+    {
+        _disposeCancellationTokenSource.Cancel();
+        _disposeCancellationTokenSource.Dispose();
+        base.Dispose();
     }
 }
