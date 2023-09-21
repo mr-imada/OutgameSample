@@ -3,7 +3,7 @@
 
 ## 動作イメージ
 
-https://github.com/mr-imada/OutgameSample/assets/11347090/b7957b0a-f45e-41ea-aaab-d2a017bf4f17
+https://github.com/mr-imada/OutgameSample/assets/11347090/e15bc980-fda6-457f-a7b0-93d2f4d4a5bb
 
 以下が行なえます。
 - Test PageからNext PageへのPage切り替え
