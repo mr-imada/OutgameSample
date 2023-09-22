@@ -15,7 +15,6 @@ public class TestPageLifecycle : LifecyclePageBase
     private readonly ModalManager _modalManager;
     private readonly NextPageUseCase _nextPageUseCase;
     private ISubscriber<MessagePipeTestMessage> _testMessageSubscriber;
-    private readonly CancellationTokenSource _disposeCancellationTokenSource = new();
 
     [Inject]
     public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, ISubscriber<MessagePipeTestMessage> testMessageSubscriber) : base(view)
@@ -40,25 +39,18 @@ public class TestPageLifecycle : LifecyclePageBase
         _view.OnClickPage.Subscribe(_ => UniTask.Void(async () =>
         {
             // 通信を行い、通信結果を渡して次の画面を開く
-            var parameter = await _nextPageUseCase.DoConnect(cancellationToken: PageExitCancellationToken);
+            var parameter = await _nextPageUseCase.DoConnect(cancellationToken: ExitCancellationToken);
             _publisher.SendPushEvent(new NextPageBuilder(parameter));
         }));
         _view.OnClickModal.Subscribe(_ =>
         {
             // 通信を行わずにパラメータだけを渡して次の画面を開く
             var countParameter = new TestModalLifecycle.CountParameter(1);
-            _modalManager.Push(new TestModalBuilder(countParameter), cancellationToken: PageExitCancellationToken).Forget();
+            _modalManager.Push(new TestModalBuilder(countParameter), cancellationToken: ExitCancellationToken).Forget();
         });
         _testMessageSubscriber.Subscribe(m =>
         {
             _view.UpdateModalCount(m.Count);
-        }).AddTo(_disposeCancellationTokenSource.Token);
-    }
-
-    public override void Dispose()
-    {
-        _disposeCancellationTokenSource.Cancel();
-        _disposeCancellationTokenSource.Dispose();
-        base.Dispose();
+        }).AddTo(DisposeCancellationToken);
     }
 }
