@@ -1,6 +1,9 @@
 # OutgameSample
 アウトゲーム設計のサンプルプロジェクトです。
 
+プロジェクトの解説記事はこちらです。  
+https://tech.mirrativ.stream/entry/2023/09/22/112042
+
 ## 動作イメージ
 
 https://github.com/mr-imada/OutgameSample/assets/11347090/e15bc980-fda6-457f-a7b0-93d2f4d4a5bb
