@@ -7,17 +7,17 @@ using System.Threading;
 using MessagePipe;
 using UniRx;
 
-[AssetName("TestPage")]
-public class TestPageLifecycle : LifecyclePageBase
+[AssetName("FirstPage")]
+public class FirstPageLifecycle : LifecyclePageBase
 {
-    private readonly TestPageView _view;
+    private readonly FirstPageView _view;
     private readonly PageEventPublisher _publisher;
     private readonly ModalManager _modalManager;
     private readonly NextPageUseCase _nextPageUseCase;
-    private ISubscriber<MessagePipeTestMessage> _testMessageSubscriber;
+    private ISubscriber<MessagePipeCounterMessage> _testMessageSubscriber;
 
     [Inject]
-    public TestPageLifecycle(TestPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, ISubscriber<MessagePipeTestMessage> testMessageSubscriber) : base(view)
+    public FirstPageLifecycle(FirstPageView view, PageEventPublisher publisher, ModalManager modalManager, NextPageUseCase nextPageUseCase, ISubscriber<MessagePipeCounterMessage> testMessageSubscriber) : base(view)
     {
         _view = view;
         _publisher = publisher;
@@ -28,7 +28,7 @@ public class TestPageLifecycle : LifecyclePageBase
 
     protected override UniTask WillPushEnterAsync(CancellationToken cancellationToken)
     {
-        var testModel = new TestPageModel();
+        var testModel = new FirstPageModel();
         _view.SetView(testModel);
         return UniTask.CompletedTask;
     }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UniRx;
 using TMPro;
 
-public class TestPageView : PageViewBase
+public class FirstPageView : PageViewBase
 {
     [SerializeField] private TextMeshProUGUI _messageText;
     [SerializeField] private TextMeshProUGUI _modalCountText;
@@ -15,9 +15,9 @@ public class TestPageView : PageViewBase
     public IObservable<Unit> OnClickPage => _nextPageButton.OnClickAsObservable();
     public IObservable<Unit> OnClickModal => _nextModalButton.OnClickAsObservable();
 
-    public void SetView(TestPageModel model)
+    public void SetView(FirstPageModel model)
     {
-        _messageText.SetText(model.TestMessage);
+        _messageText.SetText(model.FirstPageMessage);
         UpdateModalCount(0);
     }
 
