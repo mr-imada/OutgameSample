@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 2523044243741955764}
   - component: {fileID: 5456002385369415367}
   m_Layer: 5
-  m_Name: TestPage
+  m_Name: FirstPage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

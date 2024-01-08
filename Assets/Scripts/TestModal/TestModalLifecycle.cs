@@ -12,7 +12,7 @@ public class TestModalLifecycle : LifecycleModalBase
     private readonly TestModalView _view;
     private readonly ModalManager _modalManager;
     private readonly CountParameter _parameter;
-    private readonly IPublisher<MessagePipeTestMessage> _testMessagePublisher;
+    private readonly IPublisher<MessagePipeCounterMessage> _testMessagePublisher;
 
     /// <summary>
     /// モーダルの重なり回数のパラメータ
@@ -28,7 +28,7 @@ public class TestModalLifecycle : LifecycleModalBase
     }
 
     [Inject]
-    public TestModalLifecycle(TestModalView view, ModalManager modalManager, CountParameter parameter, IPublisher<MessagePipeTestMessage> publisher) : base(view)
+    public TestModalLifecycle(TestModalView view, ModalManager modalManager, CountParameter parameter, IPublisher<MessagePipeCounterMessage> publisher) : base(view)
     {
         _view = view;
         _modalManager = modalManager;
@@ -49,7 +49,7 @@ public class TestModalLifecycle : LifecycleModalBase
         
         _view.OnApply.Subscribe(_ =>
         {
-            _testMessagePublisher.Publish(new MessagePipeTestMessage(_parameter.ModalCount));
+            _testMessagePublisher.Publish(new MessagePipeCounterMessage(_parameter.ModalCount));
         });
 
         _view.OnNext.Subscribe(_ =>

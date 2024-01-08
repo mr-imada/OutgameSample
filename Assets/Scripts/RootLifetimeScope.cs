@@ -17,7 +17,7 @@ public class RootLifetimeScope : LifetimeScope
         builder.Register<IHttpClient>(_ => new HttpClient(), Lifetime.Singleton);
 
         var options = builder.RegisterMessagePipe();
-        builder.RegisterMessageBroker<MessagePipeTestMessage>(options);
+        builder.RegisterMessageBroker<MessagePipeCounterMessage>(options);
         builder.RegisterEntryPoint<TestEntryPoint>();
     }
 
@@ -32,7 +32,7 @@ public class RootLifetimeScope : LifetimeScope
 
         public void Start()
         {
-            _publisher.SendPushEvent(new TestPageBuilder());
+            _publisher.SendPushEvent(new FirstPageBuilder());
         }
     }
 }
